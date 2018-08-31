@@ -1,0 +1,56 @@
+buildscript {
+	ext {
+		springBootVersion = '2.0.4.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'war'
+
+group = 'com.bp'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.0.4.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.0.4.RELEASE'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8'
+	compile group: 'com.h2database', name: 'h2', version: '1.4.197'
+
+	testCompile group: 'io.rest-assured', name: 'rest-assured', version: '3.1.1'
+	testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.0.4.RELEASE'
+	testCompile group: 'com.h2database', name: 'h2', version: '1.4.197'
+}
+
+task clearJar(type:Delete){
+	delete 'build/libs/lib'
+}
+
+task copyJar(type: Copy) {
+	from configurations.runtime
+	into('build/libs/lib')
+}
+
+task release(type:Copy,dependsOn:[build,clearJar,copyJar])
+
+webAppDirName = 'sprintboot20180830'
+war{
+}
